@@ -12,10 +12,28 @@
     aria-expanded="false"
     aria-controls="{{ localPosition }}List"
     aria-describedby="{{ localPosition }}Label"
+    {% if language_selector_view_type == "inline" %}style="display: none;"{% endif %}
   >
     <span>{{ localization.language.endonym_name | capitalize }}</span>
     {{ 'icon-caret.svg' | inline_asset_content }}
   </button>
+
+  {% if language_selector_view_type == "inline" %}
+    <div class="inline-language-selector">
+      {%- for language in localization.available_languages -%}
+        <a href="#"
+            class="language-link link link--text caption-large{% if language.iso_code == localization.language.iso_code %} active{% endif %}"
+            hreflang="{{ language.iso_code }}"
+            lang="{{ language.iso_code }}"
+            data-value="{{ language.iso_code }}">
+          {{ language.iso_code | upcase }}
+        </a>
+        {%- unless forloop.last -%}
+          <span class="language-separator">&nbsp;|&nbsp;</span>
+        {%- endunless -%}
+      {%- endfor -%}
+    </div>
+  {% else %}
   <div class="disclosure__list-wrapper language-selector" hidden>
     <ul id="{{ localPosition }}List" role="list" class="disclosure__list list-unstyled">
       {%- for language in localization.available_languages -%}
@@ -45,5 +63,6 @@
       {%- endfor -%}
     </ul>
   </div>
+{% endif %}
 </div>
 <input type="hidden" name="locale_code" value="{{ localization.language.iso_code }}">

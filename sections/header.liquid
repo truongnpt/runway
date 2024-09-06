@@ -106,7 +106,12 @@
   endfor
 -%}
 
-<{% if section.settings.sticky_header_type != 'none' %}sticky-header data-sticky-type="{{ section.settings.sticky_header_type }}"{% else %}div{% endif %} class="header-wrapper color-{{ section.settings.color_scheme }} gradient{% if section.settings.show_line_separator %} header-wrapper--border-bottom{% endif %}">
+{% capture header_element %}{% if section.settings.sticky_header_type != 'none' %}sticky-header{% else %}div{% endif %}{% endcapture %}
+
+<{{ header_element }}
+  {% if section.settings.sticky_header_type != 'none' %}data-sticky-type="{{ section.settings.sticky_header_type }}"{% endif %}
+  class="header-wrapper color-{{ section.settings.color_scheme }} gradient{% if section.settings.show_line_separator %} header-wrapper--border-bottom{% endif %}"
+>
   {%- liquid
     assign social_links = false
     assign localization_forms = false
@@ -216,11 +221,11 @@
         {% endif %}
 
         {%- if section.settings.enable_language_selector and localization.available_languages.size > 1 -%}
-          <localization-form class="small-hide medium-hide" data-prevent-hide>
+          <localization-form class="small-hide medium-hide" data-prevent-hide style="display: flex; justify-content: center; align-items: center;">
             {%- form 'localization', id: 'HeaderLanguageForm', class: 'localization-form' -%}
               <div>
                 <h2 class="visually-hidden" id="HeaderLanguageLabel">{{ 'localization.language_label' | t }}</h2>
-                {%- render 'language-localization', localPosition: 'HeaderLanguage' -%}
+                {%- render 'language-localization', localPosition: 'HeaderLanguage', language_selector_view_type: section.settings.language_selector_view_type -%}
               </div>
             {%- endform -%}
           </localization-form>
@@ -280,7 +285,7 @@
       
     </div>
   </header>
-</{% if section.settings.sticky_header_type != 'none' %}sticky-header{% else %}div{% endif %}>
+</{{ header_element }}>
 
 {%- if settings.cart_type == "notification" -%}
   {%- render 'cart-notification', color_scheme: section.settings.color_scheme, desktop_menu_type: section.settings.menu_type_desktop -%}
@@ -563,6 +568,22 @@
       "id": "enable_language_selector",
       "default": false,
       "label": "t:sections.header.settings.enable_language_selector.label"
+    },
+    {
+      "type": "select",
+      "id": "language_selector_view_type",
+      "options": [
+        {
+          "value": "inline",
+          "label": "t:sections.header.settings.language_selector_view_type.options__1.label"
+        },
+        {
+          "value": "dropdown",
+          "label": "t:sections.header.settings.language_selector_view_type.options__2.label"
+        }
+      ],
+      "default": "inline",
+      "label": "t:sections.header.settings.language_selector_view_type.label"
     },
     {
       "type": "header",

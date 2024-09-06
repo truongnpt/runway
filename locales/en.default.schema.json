@@ -1194,6 +1194,15 @@
         "enable_customer_avatar": {
           "label": "Show avatar",
           "info": "Customers will only see their avatar when they're signed in with Shop"
+        },
+        "language_selector_view_type": {
+          "label": "Language selector view type",
+          "options__1": {
+            "label": "Inline"
+          },
+          "options__2": {
+            "label": "Dropdown"
+          }
         }
       }
     },

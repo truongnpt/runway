@@ -13,7 +13,7 @@
 {%- endif -%}
 
 <script src="{{ 'main-search.js' | asset_url }}" defer="defer"></script>
-
+<script src="{{ 'load-more.js' | asset_url }}" defer="defer"></script>
 <style>
   .template-search__header {
     margin-bottom: 3rem;
@@ -63,7 +63,7 @@
   }
 {%- endstyle -%}
 
-{% paginate search.results by 24 %}
+{% paginate search.results by section.settings.products_per_page %}
   <div class="template-search{% unless search.performed and search.results_count > 0 %} template-search--empty{% endunless %} section-{{ section.id }}-padding">
     <div class="template-search__header page-width{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}">
       <h1 class="h2 center">
@@ -226,7 +226,7 @@
             </aside>
           {%- endif -%}
         {%- endif -%}
-        <div class="product-grid-container" id="ProductGridContainer">
+        <div class="product-grid-container" id="ProductGridContainer" data-last-page="{{ paginate.pages }}">
           {%- if search.results.size == 0 and search.filters != empty -%}
             <div
               class="template-search__results collection collection--empty{% if section.settings.filter_type != 'vertical' %} page-width{% endif %}"
@@ -320,7 +320,11 @@
                 {%- endfor -%}
               </ul>
               {%- if paginate.pages > 1 -%}
-                {% render 'pagination', paginate: paginate %}
+                <div id="infinite-scroll-trigger" class="pagination-wrapper" style="text-align: center;">
+                  <div class="loading-spinner" style="display: none;">
+                    {%- render 'loading-spinner' -%}
+                  </div>
+                </div>
               {%- endif -%}
             </div>
           {%- endif -%}
@@ -339,6 +343,15 @@
   "tag": "section",
   "class": "section",
   "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 8,
+      "max": 36,
+      "step": 4,
+      "default": 16,
+      "label": "t:sections.main-collection-product-grid.settings.products_per_page.label"
+    },
     {
       "type": "range",
       "id": "columns_desktop",
@@ -460,7 +473,7 @@
           "label": "t:sections.main-collection-product-grid.settings.filter_type.options__3.label"
         }
       ],
-      "default": "horizontal",
+      "default": "drawer",
       "label": "t:sections.main-collection-product-grid.settings.filter_type.label",
       "info": "t:sections.main-collection-product-grid.settings.filter_type.info"
     },

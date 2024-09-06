@@ -22,6 +22,8 @@
   <script src="{{ 'quick-order-list.js' | asset_url }}" defer="defer"></script>
 {%- endif -%}
 
+<script src="{{ 'load-more.js' | asset_url }}" defer="defer"></script>
+
 {%- style -%}
   .section-{{ section.id }}-padding {
     padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
@@ -120,6 +122,7 @@
       <div
         class="product-grid-container{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
         id="ProductGridContainer"
+        data-last-page="{{ paginate.pages }}"
         {% if settings.animations_reveal_on_scroll %}
           data-cascade
         {% endif %}
@@ -183,7 +186,11 @@
             </ul>
 
             {%- if paginate.pages > 1 -%}
-              {% render 'pagination', paginate: paginate, anchor: '' %}
+              <div id="infinite-scroll-trigger" class="pagination-wrapper" style="text-align: center;">
+                <div class="loading-spinner" style="display: none;">
+                  {%- render 'loading-spinner' -%}
+                </div>
+              </div>
             {%- endif -%}
           </div>
         {%- endif -%}
@@ -358,7 +365,7 @@
           "label": "t:sections.main-collection-product-grid.settings.filter_type.options__3.label"
         }
       ],
-      "default": "horizontal",
+      "default": "drawer",
       "label": "t:sections.main-collection-product-grid.settings.filter_type.label",
       "info": "t:sections.main-collection-product-grid.settings.filter_type.info"
     },
