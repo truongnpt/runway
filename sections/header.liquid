@@ -74,7 +74,8 @@
 
 {%- style -%}
   .header {
-    padding: {{ section.settings.padding_top | times: 0.5 | round: 0 }}px 3rem {{ section.settings.padding_bottom | times: 0.5 | round: 0 }}px 3rem;
+    padding-top: {{ section.settings.padding_top | times: 0.5 | round: 0 }}px ;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.5 | round: 0 }}px;
   }
 
   .section-header {
@@ -522,7 +523,7 @@
           "label": "t:sections.header.settings.sticky_header_type.options__4.label"
         }
       ],
-      "default": "on-scroll-up",
+      "default": "always",
       "label": "t:sections.header.settings.sticky_header_type.label"
     },
     {
@@ -566,7 +567,7 @@
     {
       "type": "checkbox",
       "id": "enable_language_selector",
-      "default": false,
+      "default": true,
       "label": "t:sections.header.settings.enable_language_selector.label"
     },
     {
@@ -593,7 +594,7 @@
     {
       "type": "checkbox",
       "id": "enable_cart",
-      "default": true,
+      "default": false,
       "label": "t:sections.header.settings.enable_cart.label"
     },
     {
@@ -604,7 +605,7 @@
     {
       "type": "checkbox",
       "id": "enable_customer_avatar",
-      "default": true,
+      "default": false,
       "label": "t:sections.header.settings.enable_customer_avatar.label",
       "info": "t:sections.header.settings.enable_customer_avatar.info"
     },
@@ -625,7 +626,7 @@
           "label": "t:sections.header.settings.mobile_logo_position.options__2.label"
         }
       ],
-      "default": "center",
+      "default": "left",
       "label": "t:sections.header.settings.mobile_logo_position.label"
     },
     {
@@ -654,7 +655,7 @@
       "step": 4,
       "unit": "px",
       "label": "t:sections.all.padding.padding_top",
-      "default": 20
+      "default": 12
     },
     {
       "type": "range",
@@ -664,7 +665,7 @@
       "step": 4,
       "unit": "px",
       "label": "t:sections.all.padding.padding_bottom",
-      "default": 20
+      "default": 12
     }
   ],
   "blocks": [

@@ -1026,7 +1026,18 @@
         },
         "newsletter_heading": {
           "label": "Heading",
-          "default": "Subscribe to our emails"
+          "default": "Newsletter"
+        },
+        "newsletter_text": {
+          "label": "Text",
+          "default": "Subscribe to our emails to stay in the loop about our latest products and services."
+        },
+        "header__copyright": {
+          "content": "Copyright"
+        },
+        "copyright_text": {
+          "label": "Copyright text",
+          "default": "© 2023 RUNWAY Vietnam. Design by Behaif."
         },
         "header__1": {
           "content": "Email Signup",
