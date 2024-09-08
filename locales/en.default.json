@@ -314,7 +314,13 @@
       }
     },
     "footer": {
-      "payment": "Payment methods"
+      "payment": "Payment methods",
+      "footer_menu": {
+        "heading_1": "About us",
+        "heading_2": "Contact",
+        "heading_3": "Help",
+        "heading_4": "Legal"
+      }
     },
     "featured_blog": {
       "view_all": "View all",

@@ -2753,6 +2753,7 @@ details[open] > .header__menu-item .icon-caret {
   color: rgb(var(--color-foreground));
   text-decoration: underline;
   text-underline-offset: 0.3rem;
+  font-weight: bold;
 }
 
 .header__menu-item:hover .header__active-menu-item {
@@ -3520,4 +3521,8 @@ details-disclosure > details {
   100% {
     transform: translateX(100%) scaleX(0);
   }
+}
+
+.space-full-width {
+  width: 100%; padding-left: 1.5rem; padding-right: 1.5rem;
 }

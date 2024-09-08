@@ -21,7 +21,7 @@
                     class="header__active-menu-item"
                   {% endif %}
                 >
-                  {{- link.title | escape -}}
+                  {{- link.title | escape | upcase -}}
                 </span>
                 {{- 'icon-caret.svg' | inline_asset_content -}}
               </summary>
@@ -31,7 +31,7 @@
                 tabindex="-1"
               >
                 <ul
-                  class="mega-menu__list page-width{% if link.levels == 1 %} mega-menu__list--condensed{% endif %}"
+                  class="mega-menu__list {% if link.levels == 1 %} mega-menu__list--condensed{% endif %} space-full-width {% if mega_menu_content_inline %} child-link-inline{% endif %} {% if link.levels == 2 %} grandchild{% endif %}"
                   role="list"
                 >
                   {%- for childlink in link.links -%}
@@ -39,15 +39,20 @@
                       <a
                         id="HeaderMenu-{{ link.handle }}-{{ childlink.handle }}"
                         href="{{ childlink.url }}"
-                        class="mega-menu__link mega-menu__link--level-2 link{% if childlink.current %} mega-menu__link--active{% endif %}"
+                        class="mega-menu__link mega-menu__link--level-2 link{% if link.links.first.handle == childlink.handle %} mega-menu__link--active{% endif %}"
                         {% if childlink.current %}
                           aria-current="page"
                         {% endif %}
                       >
-                        {{ childlink.title | escape }}
+                        {% if mega_menu_content_inline and childlink.links == blank %}
+                          <span class="mega-menu__link-icon">
+                            {{- 'icon-down-to-right.svg' | inline_asset_content -}}
+                          </span>
+                        {% endif %}
+                        {{ childlink.title | escape |  upcase }}
                       </a>
                       {%- if childlink.links != blank -%}
-                        <ul class="list-unstyled" role="list">
+                        <ul class="list-unstyled " role="list">
                           {%- for grandchildlink in childlink.links -%}
                             <li>
                               <a
@@ -58,7 +63,7 @@
                                   aria-current="page"
                                 {% endif %}
                               >
-                                {{ grandchildlink.title | escape }}
+                                {{ grandchildlink.title | escape | upcase }}
                               </a>
                             </li>
                           {%- endfor -%}
@@ -84,7 +89,7 @@
                 class="header__active-menu-item"
               {% endif %}
             >
-              {{- link.title | escape -}}
+              {{- link.title | escape | upcase -}}
             </span>
           </a>
         {%- endif -%}
@@ -92,3 +97,61 @@
     {%- endfor -%}
   </ul>
 </nav>
+
+<script>
+    class MegaMenu {
+  constructor() {
+    this.init();
+  }
+
+  init() {
+    if (window.innerWidth >= 990) {
+      this.setupEventListeners();
+    }
+  }
+
+  setupEventListeners() {
+    // Loop through section.settings.menu.links
+    const menuLinks = {{ section.settings.menu.links | json }};
+    menuLinks.forEach((link, index) => {
+      const linkElement = document.querySelector(`#Details-HeaderMenu-${index}`);
+      if (linkElement) {
+        
+        linkElement.addEventListener('click', () => {
+          const firstChild = linkElement.querySelector('.mega-menu__list.grandchild .mega-menu__link.mega-menu__link--level-2');
+          const childList = linkElement.querySelectorAll('.mega-menu__list.grandchild .mega-menu__link.mega-menu__link--level-2');
+          if (firstChild) {
+            childList.forEach(l => l.classList.remove('mega-menu__link--active'));
+            firstChild.classList.add('mega-menu__link--active');
+          }
+        });
+      }
+    });
+    const megaMenuLinks = document.querySelectorAll('.mega-menu__list.grandchild .mega-menu__link.mega-menu__link--level-2');
+    megaMenuLinks.forEach(link => {
+      link.addEventListener('click', (event) => {
+        if (window.innerWidth >= 990) {
+          event.preventDefault();
+          event.stopPropagation();
+          // Remove 'mega-menu__link--active' class from all links
+          megaMenuLinks.forEach(l => l.classList.remove('mega-menu__link--active'));
+          
+          // Add 'mega-menu__link--active' class to the clicked link
+          event.currentTarget.classList.add('mega-menu__link--active');
+        }
+      });
+    });
+  }
+}
+
+// Initialize the MegaMenu
+document.addEventListener('DOMContentLoaded', () => {
+  const megaMenu = new MegaMenu();
+
+  // Re-initialize on window resize
+  window.addEventListener('resize', () => {
+    megaMenu.init();
+  });
+});
+</script>
+
