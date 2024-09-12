@@ -862,7 +862,7 @@
       </form>
     </facet-filters-form>
   {%- endif -%}
-  {% comment %} <div
+  <div
     class="product-count light{% if filter_type == 'vertical' or filter_type == 'horizontal' %} medium-hide large-up-hide{% endif %}"
     role="status"
   >
@@ -881,7 +881,7 @@
       </span>
     </h2>
     {%- render 'loading-spinner' -%}
-  </div> {% endcomment %}
+  </div>
   {%- if filter_type == 'drawer' -%}
     <facet-filters-form class="facets facets-pill small-hide">
       <form id="FacetFiltersPillsForm" class="facets__form">

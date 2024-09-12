@@ -302,42 +302,118 @@ FacetFiltersForm.setListeners();
 class PriceRange extends HTMLElement {
   constructor() {
     super();
-    this.querySelectorAll('input').forEach((element) => {
-      element.addEventListener('change', this.onRangeChange.bind(this));
-      element.addEventListener('keydown', this.onKeyDown.bind(this));
-    });
-    this.setMinAndMaxValues();
+    this.minSlider = this.querySelector('.min-slider');
+    this.maxSlider = this.querySelector('.max-slider');
+    this.minInput = this.querySelector('input[name$="filter.v.price.gte"]');
+    this.maxInput = this.querySelector('input[name$="filter.v.price.lte"]');
+    this.sliderTrack = this.querySelector('.slider-track');
+    this.minLabel = this.querySelector('.min-label');
+    this.maxLabel = this.querySelector('.max-label');
+
+    if (this.minSlider && this.maxSlider && this.minInput && this.maxInput && this.sliderTrack) {
+      this.minSlider.addEventListener('input', this.onSliderChange.bind(this));
+      this.maxSlider.addEventListener('input', this.onSliderChange.bind(this));
+      this.minInput.addEventListener('change', this.onInputChange.bind(this));
+      this.maxInput.addEventListener('change', this.onInputChange.bind(this));
+
+      // this.setMinAndMaxValues();
+      this.updateSliderTrack();
+      this.updateLabels();
+    } else {
+      console.warn('PriceRange: Some elements are missing. The price range slider may not function correctly.');
+    }
   }
 
-  onRangeChange(event) {
-    this.adjustToValidValues(event.currentTarget);
-    this.setMinAndMaxValues();
+  onSliderChange(event) {
+    if (!this.minSlider || !this.maxSlider || !this.minInput || !this.maxInput) return;
+
+    const isMinSlider = event.target === this.minSlider;
+    const value = parseInt(event.target.value);
+    
+    if (isMinSlider) {
+      if (value > parseInt(this.maxSlider.value)) {
+        this.minSlider.value = this.maxSlider.value;
+        this.minInput.value = this.maxSlider.value;
+      } else {
+        this.minInput.value = value;
+      }
+    } else {
+      if (value < parseInt(this.minSlider.value)) {
+        this.maxSlider.value = this.minSlider.value;
+        this.maxInput.value = this.minSlider.value;
+      } else {
+        this.maxInput.value = value;
+      }
+    }
+
+    this.updateSliderTrack();
+    this.updateLabels();
   }
 
-  onKeyDown(event) {
-    if (event.metaKey) return;
+  onInputChange(event) {
+    if (!this.minSlider || !this.maxSlider || !this.minInput || !this.maxInput) return;
 
-    const pattern = /[0-9]|\.|,|'| |Tab|Backspace|Enter|ArrowUp|ArrowDown|ArrowLeft|ArrowRight|Delete|Escape/;
-    if (!event.key.match(pattern)) event.preventDefault();
+    const isMinInput = event.target === this.minInput;
+    const value = parseInt(event.target.value);
+    const max = parseInt(this.maxSlider.max);
+    
+    if (isMinInput) {
+      if (value > parseInt(this.maxInput.value)) {
+        this.minInput.value = this.maxInput.value;
+        this.minSlider.value = this.maxInput.value;
+      } else {
+        this.minSlider.value = value;
+      }
+    } else {
+      if (value < parseInt(this.minInput.value)) {
+        this.maxInput.value = this.minInput.value;
+        this.maxSlider.value = this.minInput.value;
+      } else {
+        this.maxSlider.value = value;
+      }
+    }
+
+    this.updateSliderTrack();
+    this.updateLabels();
   }
 
   setMinAndMaxValues() {
-    const inputs = this.querySelectorAll('input');
-    const minInput = inputs[0];
-    const maxInput = inputs[1];
-    if (maxInput.value) minInput.setAttribute('data-max', maxInput.value);
-    if (minInput.value) maxInput.setAttribute('data-min', minInput.value);
-    if (minInput.value === '') maxInput.setAttribute('data-min', 0);
-    if (maxInput.value === '') minInput.setAttribute('data-max', maxInput.getAttribute('data-max'));
+    if (!this.minSlider || !this.maxSlider || !this.minInput || !this.maxInput) return;
+
+    const minValue = parseInt(this.minInput.value) || 0;
+    const maxValue = parseInt(this.maxInput.value) || parseInt(this.maxSlider.max);
+    const sliderMax = parseInt(this.maxSlider.max);
+
+    this.minSlider.value = minValue;
+    this.maxSlider.value = maxValue;
+
+    this.minInput.setAttribute('max', maxValue);
+    this.maxInput.setAttribute('min', minValue);
   }
 
-  adjustToValidValues(input) {
-    const value = Number(input.value);
-    const min = Number(input.getAttribute('data-min'));
-    const max = Number(input.getAttribute('data-max'));
+  updateSliderTrack() {
+    if (!this.minSlider || !this.maxSlider || !this.sliderTrack) return;
 
-    if (value < min) input.value = min;
-    if (value > max) input.value = max;
+    const min = parseInt(this.minSlider.value);
+    const max = parseInt(this.maxSlider.value);
+    const sliderMax = parseInt(this.maxSlider.max);
+
+    const minPosition = (min / sliderMax) * 100;
+    const maxPosition = (max / sliderMax) * 100;
+
+    this.sliderTrack.style.background = `linear-gradient(to right, #ccc ${minPosition}%, #000 ${minPosition}%, #000 ${maxPosition}%, #ccc ${maxPosition}%)`;
+  }
+
+  updateLabels() {
+    if (!this.minLabel || !this.maxLabel) return;
+
+    const currencySymbol = this.querySelector('.field-currency').textContent;
+    this.minLabel.textContent = `${this.formatMoney(this.minSlider.value)}${currencySymbol}`;
+    this.maxLabel.textContent = `${this.formatMoney(this.maxSlider.value)}${currencySymbol}`;
+  }
+
+  formatMoney(value) {
+    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value).replace('₫', '').trim();
   }
 }
 
